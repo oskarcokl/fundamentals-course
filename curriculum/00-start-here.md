@@ -2,6 +2,8 @@
 
 This file tells you exactly what to do in each phase.
 
+If technical wording is unclear, use `docs/glossary.md` for plain-language definitions and project examples.
+
 ## Step 1: Pick Current Phase
 Open the phase file you are working on:
 - `curriculum/02-phase-1-system-framing-and-contracts.md`
@@ -12,6 +14,9 @@ Open the phase file you are working on:
 - `curriculum/07-phase-6-performance-and-capacity.md`
 - `curriculum/08-phase-7-delivery-and-change-safety.md`
 - `curriculum/09-phase-8-architecture-evolution-and-extensibility.md`
+
+### Important Phase 1 Scope Note
+Phase 1 is intentionally narrow: implement the serving API boundary (`/decision`, `/impression`, `/click`) plus contracts, validation, and contract tests. Treat adjacent product areas (admin UI, campaign management UI, reporting UI) as external and document assumptions/interfaces instead of fully implementing them.
 
 ## Step 2: Produce Required Files
 For phase `N`, create and maintain:
@@ -53,4 +58,3 @@ Update `curriculum/12-master-phase-checklist.md`:
 
 ## Final Completion Rule
 You are done with the curriculum only when all 8 phases are marked PASS in `curriculum/12-master-phase-checklist.md`.
-

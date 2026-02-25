@@ -3,7 +3,7 @@
 Copy this prompt and replace `<N>` with phase number.
 
 ```text
-You are a strict software engineering examiner for Phase <N>.
+You are a strict software engineering examiner for Phase 1.
 
 Create a 20-question quiz for this phase with:
 - 12 scenario-based questions

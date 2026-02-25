@@ -1,0 +1,250 @@
+openapi: 3.0.3
+info:
+  title: AdServer Service API
+  version: 1.0.0
+servers:
+  - url: https://api.adserver.com
+
+paths:
+  /decision:
+    post:
+      summary: Decide the best ad for a request
+      operationId: decideAd
+      parameters:
+        - in: cookie
+          name: userId
+          required: false
+          schema:
+            type: string
+          description: Optional user identifier from cookie
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecideRequest'
+      responses:
+        '200':
+          description: Successful ad decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecideResponse'
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /impression:
+    post:
+      summary: Track an ad impression
+      operationId: trackImpression
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImpressionRequest'
+      responses:
+        '200':
+          description: Impression tracked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackResponse'
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /click:
+    post:
+      summary: Track an ad click
+      operationId: trackClick
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClickRequest'
+      responses:
+        '200':
+          description: Click tracked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackResponse'
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    DecideRequest:
+      type: object
+      required:
+        - requestId
+        - placementId
+        - referer
+      properties:
+        requestId:
+          type: string
+          description: Unique request identifier from caller
+        placementId:
+          type: string
+          description: Identifier of ad placement
+        referer:
+          type: string
+          description: Top window location.href
+        country:
+          type: string
+          description: ISO country code (for example US)
+        context:
+          type: object
+          additionalProperties: true
+          description: Additional targeting context
+
+    DecideResponse:
+      type: object
+      required:
+        - requestId
+        - ad
+      properties:
+        requestId:
+          type: string
+        ad:
+          type: object
+          required:
+            - adId
+            - creativeUrl
+            - clickUrl
+            - impressionUrl
+          properties:
+            adId:
+              type: string
+            creativeUrl:
+              type: string
+              format: uri
+            clickUrl:
+              type: string
+              format: uri
+            impressionUrl:
+              type: string
+              format: uri
+            campaignId:
+              type: string
+            priceCpm:
+              type: number
+              format: float
+            creativeId:
+              type: string
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: placementId is required
+
+    ImpressionRequest:
+      type: object
+      required:
+        - requestId
+        - adId
+        - referer
+        - placementId
+        - campaignId
+      properties:
+        requestId:
+          type: string
+          description: Original request identifier from /decision
+        adId:
+          type: string
+          description: Rendered ad identifier
+        referer:
+          type: string
+          description: Top window location.href
+        campaignId:
+          type: string
+        creativeId:
+          type: string
+        placementId:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+          description: Event timestamp in ISO 8601
+
+    ClickRequest:
+      type: object
+      required:
+        - requestId
+        - adId
+        - referer
+        - placementId
+        - campaignId
+      properties:
+        requestId:
+          type: string
+          description: Original request identifier from /decision
+        adId:
+          type: string
+          description: Clicked ad identifier
+        referer:
+          type: string
+          description: Top window location.href
+        campaignId:
+          type: string
+        creativeId:
+          type: string
+        placementId:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+          description: Event timestamp in ISO 8601
+        targetUrl:
+          type: string
+          format: uri
+          description: Destination URL that was clicked
+
+    TrackResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - accepted
+        eventId:
+          type: string

@@ -1,0 +1,19 @@
+{
+  "name": "adserver-phase1",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx app.ts",
+    "test:phase1": "tsx --test tests/phase1/contract.test.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

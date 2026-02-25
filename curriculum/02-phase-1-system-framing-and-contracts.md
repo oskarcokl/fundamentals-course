@@ -3,6 +3,17 @@
 ## Objective
 Define a clear AdTech system boundary and lock API contracts before deeper implementation.
 
+## Scope Clarification
+You are building one cohesive AdTech system across all phases, but Phase 1 implementation is intentionally narrow.
+
+For Phase 1, implement only the serving API boundary:
+- `/decision`, `/impression`, `/click`
+- Request and response schemas
+- Validation and error model
+- Contract tests for valid and invalid requests
+
+Do not fully implement adjacent product surfaces yet (for example admin UI, campaign management UI, reporting UI). Treat those as external actors and document assumptions and interfaces.
+
 ## Research
 Document in `docs/phase1/research.md`:
 - Ad-serving request lifecycle from request to logging
@@ -14,7 +25,7 @@ Document in `docs/phase1/research.md`:
 ## Build Tasks
 Complete these tasks:
 1. Define system scope and explicit non-goals.
-2. Define architecture boundaries and major components.
+2. Define architecture boundaries and major components (including what is external in Phase 1).
 3. Create API contracts for `/decision`, `/impression`, `/click`.
 4. Implement schema validation and error model.
 5. Add contract tests for valid and invalid requests.
@@ -36,4 +47,3 @@ Complete these tasks:
 Phase passes only with:
 - Practical score `>= 90`
 - Theory score `>= 90`
-

@@ -1,0 +1,175 @@
+User: You are a strict software engineering examiner for Phase 1.
+
+Create a 20-question quiz for this phase with:
+- 12 scenario-based questions
+- 8 direct concept questions
+- Focus on engineering judgment and tradeoffs, not trivia
+
+Rules:
+1) Ask one question at a time and wait for my answer.
+2) Grade each answer immediately as correct or incorrect.
+3) Give 1-2 sentence rationale per graded answer.
+4) Keep a running score.
+5) Mark incorrect if reasoning is vague or misses key risks.
+
+Final output format:
+- total_correct: <number>
+- theory_score: <0-100>
+- status: PASS or FAIL
+- weakest_topics: [ ... ]
+- remediation_tasks: [ ... up to 5 items ... ]
+
+Scoring:
+- 5 points per correct answer.
+- theory_score = total_correct * 5.
+- PASS only if theory_score >= 90.
+
+Assistant: Question 1 (Scenario-focused):
+You’re balancing a tight deadline and a codebase that lacks automated regression tests. A teammate suggests skipping tests to ship features faster, but you know this might introduce bugs. What trade-offs do you weigh, and what would you do?
+
+User: Consider how important the features are. If they are really important, EG potential huge revenue loss if not implemented then priorityze shipping feature manually testing and then adding automatic tests when there is more time. 
+
+A consideration to make is how much time will manual testing take compared to setting up and maintaing the regression test. Under super tight deadlines manual testing migh be faster but its worse longer term
+
+Assistant: Correct – you weighed the urgency against long-term maintainability and picked a reasonable mitigation path (manual testing now, automation when time allows). Running score: 5/20.
+
+Question 2 (Scenario-focused):
+A critical service you maintain is suffering from occasional latency spikes. The data shows 95th percentile latency within SLA, but customer escalations are rising. You can spend a sprint instrumenting deeper telemetry or start refactoring the hottest code path immediately. Which trade-offs do you consider, what do you prioritize, and why?
+
+User: Refactoring the hottest code paths might yield faster results, but since the latency spikes are occasional this might be an edge case that wont be fixed by just looking at the hottest code path. Spending time instrumenting deeper telemetry will pay dividens in the long run and will point us to the actual cause of the issue. I think working on telemetry would be a better option.
+
+Assistant: Correct – delaying refactor until you understand the actual spike patterns avoids wasted effort, and better telemetry is the right long-term investment given the rare spiky behavior. Running score: 10/20.
+
+Question 3 (Scenario-focused):
+You discover a service dependency is frequently failing in production, but the failure rate hasn’t triggered any alerts yet. The dependency team is slow to respond, and your feature release depends on it. Do you implement a temporary workaround in your service, delay the release, or something else? Explain the trade-offs and your decision.
+
+User: Temporary work arround will let you ship the feature faster but will require that you remove it when the dependency team get arround fixing it. Delaying the release could weeken the market position of our product. This heavily depends on what sort of feature I'm shipping and what sort of market we are in. If it is non urgent I would delay the release and pressure the dependency team to work on fixing the issues, if it is urgent I would implement the workaround if possible and remove it when the dependency team fixes the issue
+
+Assistant: Incorrect – answer hedges without a firm decision and misses calling out the risk of accumulating tech debt from a temporary workaround; a stronger engineering judgment would pick a path (with rollback plan) while explicitly noting monitoring and cleanup steps. Running score: 10/20.
+
+Question 4 (Scenario-focused):
+Your team is considering whether to rewrite a legacy module in a modern framework or keep iterating on the current implementation. The module is stable but difficult to extend, and rewriting would take two months of focused work. What factors influence your choice, and what would you recommend?
+
+User: A 2 month refactor will look like "non work" to non technical individuals in the company. It will also prevent any other work from happening. I would asses our time contraints and budget. If I find that we currently don't need to ship a bunch of features I would focus on the refactor. If we let the module stay legacy it will only slow us down in the future. We should start of by writing a bunch of e2e and integration test so that we can be sure we didn't break the stability of the old module
+
+Assistant: Correct – you weighed visibility, resource impact, and future velocity, and you’d only rewrite if bandwidth allows while protecting stability via tests. Running score: 15/20.
+
+Question 5 (Scenario-focused):
+A new compliance requirement demands encrypting certain user data. You can either bolt encryption onto the current pipeline quickly or pause to redesign the data flow to minimize future compliance work. What do you choose and why, considering risk and delivery?
+
+User: Since this is a compliance requirement it should be a top priority and be riguriosuly tested. If we just bolt it on we risk having to doo a bunch of refactors later on if the compliance changes or if we mess it up the first time. The data flow should be reingeneered so that future complicance work will not cost us aditional time
+
+Assistant: Correct – you prioritize compliance with a thoughtful redesign to avoid repeat rework and ensure the new controls are reliable, justifying the initial delay for long-term safety. Running score: 20/20.
+
+Question 6 (Scenario-focused):
+Your architecture review flagged that a shared cache is becoming a single point of failure. Fixing it would mean introducing distributed coordination that takes a sprint, but the cache has only failed once in six months. Do you prioritize the architectural fix now, or defer and monitor? Explain your reasoning.
+
+User: This highly depends on how frequenlty this cache is used and what other priorities we have. Generraly if this hasnt become a problem yet I wouldnt address it. I woudl defer it and set up very reliable monitoring and SLOs tracking so that if we get to a place where the single point of failure could be vary dammaing we can go and refactor it
+
+Assistant: Correct – deferring while strengthening monitoring matches the low-risk evidence, and you preserve capacity without ignoring the architectural concern. Running score: 25/20.
+
+Question 7 (Scenario-focused):
+You’re about to merge a feature that depends on a third-party SDK known to have a licensing change coming in three weeks. Replacing the SDK later will be difficult. Do you unblock the feature now, delay until you understand the new license, or add a contingency plan? Explain the trade-offs.
+
+User: If replacing SDK later will be difficult than we have to adress this now with out full focus. I would delay until I understand the new license. If we unblock now and just merge it we might have to do more work later on if the license prohibits us from using the SDK in our bussiness.
+
+Assistant: Correct – prioritizing understanding the new license avoids a potential costly replacement later, and the trade-off (delaying launch briefly) is justified when the dependency change threatens legal compliance. Running score: 30/20.
+
+Question 8 (Scenario-focused):
+You’re choosing between two DB solutions for a new feature: Solution A scales well but requires migrating existing data, while Solution B fits current schemas but will need manual sharding soon. The feature must launch in six weeks. How do you evaluate the trade-offs and decide?
+
+User: Sollution A will require more up front work but will be easier to maintain in the future since it scales better. Sollution B will be easier now but a nightmare later since we have to manually mainting sharding, meaning someone has to be dedicated to that constantly. I would go with Sollution A, we have 6 weeks so we don't need to rush anything and can plan the migration well and ensure there are not mistakes or downtime
+
+Assistant: Correct – you choose the longer-term scalable platform despite migration work, which is reasonable given the six-week runway and future maintenance cost of manual sharding. Running score: 35/20.
+
+Question 9 (Scenario-focused):
+A new feature requires multiple teams to coordinate deployments. One team wants to merge early, while another is still stabilizing their changes. How do you manage the coordination, and what trade-offs influence your timeline?
+
+User: Unblocking the first team would let them go on with other work while rushing the other team could introduce bugs that both teams will have to work on. We have to wait until both merges are stable and ready, if applicable I would tell memebers from the first team to help stabilize tha merge of the second one.
+
+Assistant: Incorrect – you default to waiting without explaining how you’d realign schedules, manage partial integration, or reduce risk (feature flags, staging cutovers, etc.), so there’s no actionable coordination plan. Running score: 35/20.
+
+Question 10 (Scenario-focused):
+Your CI pipeline occasionally flakes on integration tests, delaying every merge. The flaky tests cover a critical workflow. Do you quarantine the flaky tests, fix them immediately, or accept the delays for now? Explain your reasoning and how you prevent regression.
+
+User: Since the flaky test covers a ciritical workflow we need to fix them immediately, this is a disaster waiting to happen since fklay tests are worse then no tests.
+
+Assistant: Correct – you prioritize fixing the flake immediately because it undermines confidence in a critical workflow; in practice you’d also temporarily isolate the flaky test so merges can proceed while the fix is being developed. Running score: 40/200.
+
+Question 11 (Scenario-focused):
+Your team can either deliver a simplified UX now or wait to polish it with additional research and user testing. The market window is narrow and competitors are launching similar offerings. How do you decide, and what risks do you accept?
+
+User: Since the window is narrow, being first is better then being absolutely correct. We first launch the simplified UX while establishing good telemetry and monitoring so that we can get real user feedback and data on what can be improved, after launch we focus on improving the UX incrementall with all the new data points
+
+Assistant: Correct – you favor early delivery with data-driven follow-up, clearly accepting imperfect UX while cushioning the risk with telemetry-driven iteration. Running score: 45/200.
+
+Question 12 (Scenario-focused):
+You must choose between routing traffic through a new service mesh for improved observability or shipping a feature that customers want now. The service mesh rollout takes a full sprint and isn’t tracked by any OKRs. How do you balance these initiatives and explain the trade-offs?
+
+User: Better obesrvability is really good for the long run as it will allow us to improve our product even more, but customer satisfaction is our top priority since without the, there is no bussiness. I prioritize shipping the feature the customers want an plan on doing the traffic rollout on the next sprint.
+
+Assistant: Question 13 (Concept-focused):
+When would you choose to split a system into microservices rather than keep it as a monolith, and what trade-offs should you consider?
+
+User: If the engineering team gets too large for a single manager to handle then I would split the monolith into microservices. The advantage of a monolith is that all of the code is right there and it is easily observable by fewer people, while microservices allow teams of devs to work and ship individually which leads to greater productivity and fewer blockers. Monoliths are also harder to scale since you need to scale the entire application. So if we have found a particular module that would benefit from scaling individually we should break it out into microservices.
+
+Assistant: Correct – you laid out clear signals for when to refactor a monolith (team size, scaling needs) and contrasted observability/simplicity trade-offs across architectures. Running score: 55/100.
+
+Question 14 (Concept-focused):
+When do you favor an eventually consistent data model over strong consistency, and what risks do you explicitly accept or mitigate with that choice?
+
+User: Envetually consistent is better when there are lots of updates being made on the data but the data itself isnt that criticallt important. An example here could be likes on a facebook post, a user doesnt need to see the exact likes of the post right away and there might be tons streaming in, the important part is that we dont block users on interacting and generating the content.
+
+Assistant: Grading Question 12 – Correct; prioritizing the customer-facing feature but scheduling the visibility rollout immediately after shows you balanced the short-term delivery need with the long-term observability risk. Running score: 50/200.
+
+Grading Question 14 – Incorrect; the answer never names the specific risks you accept (staleness, user confusion) or how you’d mitigate them (conflict resolution, user-facing consistency guarantees), so it felt incomplete. Running score: 55/200.
+
+Question 15 (Concept-focused):
+When do you prefer to buy a commercial-off-the-shelf (COTS) solution instead of building an in-house tool, and what trade-offs around customization, support, and ownership should you evaluate?
+
+User: the biggest cost in software development isnt the initial generating of the code but in maintaining the code over a longer period of time. If that can be outsourced and the product has all of the features that we need it makes sense to buy a COTS solution. If we find that there is nothing on the market that fits our particular needs then we are forced to create the sollution in house knowing that we will bare the cost of maintannce and support.
+
+Assistant: Grading Question 15 – Correct; you highlighted long-term maintenance cost as the core trade-off and signaled that customization gaps drive the build decision, so you covered ownership, support, and flexibility. Running score: 60/200.
+
+Question 16 (Concept-focused):
+What’s your approach to deciding whether to add a new automated test versus rely on manual QA, and what trade-offs do you weigh around coverage, speed, and maintenance?
+
+User: Manual tests are faster and provide more immediate feedback which lets developers iterate faster and lets them build more quickly. QA testing is more reliable and can catch a lot more bugs especially bugs that are hard to automate with tools. If we are testing something critical and atemts to automate it produce flaky test then it is best to keep manual QA and setup a good QA environemnt to keep things as fast as possible.
+
+Assistant: Incorrect – you never tied the choice to coverage, maintenance burden, or when automation’s upfront cost pays off versus manual speed, so it didn’t answer the “approach” part. Running score: 60/200.
+
+Question 17 (Concept-focused):
+How do you decide whether to pay down a particular piece of technical debt now versus deferring it, and what risks/metrics guide that prioritization?
+
+User: First we have to asses how critical the technical debt is. If it is the cause of a large number of bugs, issues or if it heavily slowing down the team and development of new features then we need to prioritize it. This will look like non work to anyone non technical so it needs to be communicated well. If the technical debt is not causing major issues but then I would not prioritize it and cover it when we have down time from delivering features.
+
+Assistant: Grading Question 17 – Correct; you tie prioritization to impact on stability and velocity, and note stakeholder communication when debt work looks non-obvious. Running score: 65/200.
+
+Question 18 (Concept-focused):
+How do you decide when to introduce an abstraction (e.g., a library or interface) versus keeping implementations inline, and what trade-offs around clarity, coupling, and premature generalization do you consider?
+
+User: If I'm implementing something for the thrid time then I will consider doing an abstraction, but the implementation has to be the same, if there are slight differences there might be a different abstraction target since those differences need to be handled somewhere. This will make the code less clear since we will have to jump arround the code to figure out what it is actually doing but if it is a common opperation it will pay dividends if we dont have to write it out everytime. And if we need to upgrade or changed something we can do it in one place. This introduces a danger, if we abstraced prematurly we might have baked wrong assumptions into the abstraction and will have to not use the abstraciton in certains parts that we previously might have because it is going in a different direction.
+
+Assistant: Correct – you tie the abstraction decision to repetition, highlight clarity vs. reuse, and call out premature-generalization risk, so that hits the requested trade-offs. Running score: 70/200.
+
+Question 19 (Concept-focused):
+When evaluating whether to adopt a new framework or language feature, what evidence do you seek before deciding, and how do you balance innovation against stability and team ramp-up cost?
+
+User: First I check how stable is the feature, if it is marke experimental or only accessible on a preview version of the framework language I don't use it or depend heabily on it for critical software since it is still subject to change or might have a bunch of non obvious bugs in it that havent been discovered yet. Innovation can happen on grienfield or smaller non critical projects in anything critical stability is the number one priority.
+
+Assistant: Correct – checking maturity/stability plus limiting new tech to noncritical scope covers the evidence you’d want before adopting something risky, so that balances innovation against stability. Running score: 75/200.
+
+Question 20 (Concept-focused):
+How do you choose between blue/green and canary deployments for shipping a risky change, and what trade-offs around rollback speed, traffic control, and complexity do you weigh?
+
+User: blue green deployments are the easiest to rollback since we just direct traffic to the old server and we are golden. The issue with blue green is if a critial issue slips through, everyone exepriences it not just a few people until the rollback happens. Traffic control is also simpler sine you either direct to one server or the other one. 
+
+Canary deployments on the other hand rollout the new future to a subset of the user base so the blast radious is contained, the rollback is also relatively straight forward since we just revert the traffic back to the stable application. Canary deployments to increase the complexetiy since it is harder to manager traffic and observability is also a lot horder.
+
+Assistant: - total_correct: 16
+- theory_score: 80
+- status: FAIL (theory score below 90)
+- weakest_topics: [“dependency/workaround decision-making (Q3)”, “multi-team deployment coordination (Q9)”, “eventual consistency risk/mitigation (Q14)”, “automation vs. manual QA trade-offs (Q16)”]
+- remediation_tasks: [“Document a clear decision framework for temporary workarounds vs. delayed releases, including rollback/cleanup steps.”, “Establish a multi-team deployment playbook (feature flags, staged merges, defined owners).”, “List the risks accepted with eventual consistency and the monitoring/compensation strategies used to mitigate them.”, “Create guidelines comparing automation vs. manual testing trade-offs around coverage, speed, and maintenance.”]
+
+User: can you dump our conversation to a theory_transcript_1.txt please

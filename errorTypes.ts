@@ -1,0 +1,1 @@
+export type ErrorCode = "INVALID_REQUEST" | "MALFORMED_JSON" | "INTERNAL_ERROR";
