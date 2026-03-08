@@ -63,6 +63,10 @@ This repo has two branches:
   ready to fork and work through yourself
 - `main` — my own implementation as I progress through the phases
 
+I would recommend not downloading this curriculum but rahter using 
+the ideas behind this curriculum and building one yourself that
+is specifically tailored to you.
+
 ## Status
 
 Active and in progress. This is a living curriculum, I'm working 
