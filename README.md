@@ -56,6 +56,13 @@ included in the curriculum:
 
 A phase only passes when both scores reach 90 or above.
 
+## Using this curriculum yourself
+
+This repo has two branches:
+- `starter` — a clean template with just the curriculum files,
+  ready to fork and work through yourself
+- `main` — my own implementation as I progress through the phases
+
 ## Status
 
 Active and in progress. This is a living curriculum, I'm working 
